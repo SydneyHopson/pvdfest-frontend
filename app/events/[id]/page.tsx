@@ -8,17 +8,16 @@ interface Event {
   image: string;
 }
 
-interface EventProps {
+interface PageProps {
   params: { id: string };
 }
 
-export default function EventDetailPage({ params }: EventProps) {
-  // ✅ Ensure params.id is a valid string before fetching data
-  if (!params?.id) {
+export default function EventDetailPage({ params }: PageProps) {
+  if (!params || !params.id) {
     return notFound();
   }
 
-  // Fetch event data (Using Static Data for now)
+  // ✅ Use Static Data for Now
   const events: Event[] = [
     { id: 1, title: "Music Night", date: "2025-09-10", image: "/image/event1.webp" },
     { id: 2, title: "Art Exhibition", date: "2025-09-11", image: "/image/event2.webp" },
@@ -38,9 +37,8 @@ export default function EventDetailPage({ params }: EventProps) {
         <Image 
           src={event.image} 
           alt={event.title} 
-          layout="fill" // ✅ Makes image responsive
-          objectFit="cover" // ✅ Prevents distortion
-          className="rounded-lg shadow-lg"
+          fill // ✅ Makes image responsive
+          className="rounded-lg shadow-lg object-cover"
         />
       </div>
       <p className="text-lg">More details about {event.title} coming soon...</p>
