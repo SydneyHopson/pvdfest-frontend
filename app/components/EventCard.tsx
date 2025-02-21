@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 interface EventCardProps {
   title: string;
@@ -13,7 +14,9 @@ const EventCard: React.FC<EventCardProps> = ({ title, date, image }) => {
       <div className="p-4">
         <h2 className="text-xl font-bold">{title}</h2>
         <p className="text-gray-600">{date}</p>
-        <a href="/events" className="text-blue-500 mt-2 inline-block">Learn More →</a>
+        <Link href="/events" className="text-blue-500 hover:underline">
+  View Events
+</Link>
       </div>
     </div>
   );
