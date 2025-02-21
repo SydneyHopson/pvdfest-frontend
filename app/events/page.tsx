@@ -44,7 +44,8 @@ const hardcodedEvents = [
 ];
 
 export default function EventsPage() {
-  const [events, setEvents] = useState([]);
+  // ✅ Define the type for `events`
+  const [events, setEvents] = useState<typeof hardcodedEvents>([]);
 
   useEffect(() => {
     const USE_API = process.env.NEXT_PUBLIC_USE_API === "true";
@@ -55,7 +56,7 @@ export default function EventsPage() {
         .then((data) => setEvents(data))
         .catch((err) => {
           console.error("Error fetching events:", err);
-          setEvents(hardcodedEvents); // Fallback to hardcoded data if API fails
+          setEvents(hardcodedEvents); // ✅ Fallback to hardcoded data if API fails
         });
     } else {
       setEvents(hardcodedEvents);
