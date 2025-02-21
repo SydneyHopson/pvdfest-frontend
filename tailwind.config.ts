@@ -1,18 +1,23 @@
-import type { Config } from "tailwindcss";
+import { type Config } from "tailwindcss";
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
-export default {
+const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}", // ✅ Ensures all app folders are scanned
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
+        display: ["var(--font-anton)", "var(--font-oswald)", "var(--font-russo-one)", "var(--font-archivo-black)", "sans-serif"],
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [forms, typography],
+};
+
+export default config;
