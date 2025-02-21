@@ -5,38 +5,55 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-// ✅ Hardcoded data (Used until API is ready)
-const fallbackArtists = [
+// ✅ Define API Response Type
+type APIArtist = {
+  id: number;
+  title: { rendered: string };
+  featured_media?: string;
+  meta?: { video_url?: string };
+};
+
+// ✅ Define Artist Type
+type Artist = {
+  id: number;
+  name: string;
+  image: string;
+  video?: string;
+};
+
+// ✅ Hardcoded fallback data
+const fallbackArtists: Artist[] = [
   { id: 1, name: "Artist One", image: "/image/artists/artist1.webp", video: "/video/artists/artist1.mp4" },
   { id: 2, name: "Artist Two", image: "/image/artists/artist2.webp", video: "/video/artists/artist2.mp4" },
   { id: 3, name: "Artist Three", image: "/image/artists/artist3.webp", video: "/video/artists/artist3.mp4" },
   { id: 4, name: "Artist Four", image: "/image/artists/artist4.webp", video: "/video/artists/artist4.mp4" },
   { id: 5, name: "Artist Five", image: "/image/artists/artist5.webp", video: "/video/artists/artist5.mp4" },
   { id: 6, name: "Artist Six", image: "/image/artists/artist6.webp", video: "/video/artists/artist6.mp4" },
-  { id: 7, name: "Artist Seven", image: "/image/artists/artist7.webp", video: "/video/artists/artist7.mp4" },
-  { id: 8, name: "Artist Eight", image: "/image/artists/artist8.webp", video: "/video/artists/artist8.mp4" },
+  
 ];
 
 export default function FeaturedArtists() {
-  const [artists, setArtists] = useState(fallbackArtists);
+  const [artists, setArtists] = useState<Artist[]>(fallbackArtists); // ✅ Use Artists Type
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // ✅ API Logic is here, but it will NOT override hardcoded data yet
   useEffect(() => {
     async function fetchArtists() {
       try {
         const response = await fetch("https://pvdfest.com/wp-json/wp/v2/artists");
         if (!response.ok) throw new Error("Failed to fetch artists");
 
-        const data = await response.json();
-        const apiArtists = data.map((artist: any) => ({
+        const data: APIArtist[] = await response.json(); // ✅ Properly typed array
+
+        const apiArtists: Artist[] = data.map((artist) => ({
           id: artist.id,
-          name: artist.title.rendered,
+          name: artist.title?.rendered || "Unknown Artist",
           image: artist.featured_media || "/image/artists/default.webp",
           video: artist.meta?.video_url || undefined,
         }));
 
-        console.log("Fetched artists:", apiArtists);
+        if (apiArtists.length > 0) {
+          setArtists(apiArtists); // ✅ Now actually updates the state
+        }
       } catch (error) {
         console.error("API fetch error:", error);
       }
@@ -66,13 +83,13 @@ export default function FeaturedArtists() {
       {/* 🔹 Carousel Wrapper */}
       <div className="relative max-w-6xl mx-auto">
         {/* 🔹 Left Scroll Button */}
-        <button onClick={scrollLeft} className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-3 rounded-full z-10">
+        <button onClick={scrollLeft} className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-3 rounded-full z-10 hover:bg-black transition">
           <FaChevronLeft className="text-white text-2xl" />
         </button>
 
-        {/* 🔹 Scrollable Artist Cards (STACKED 3 PER ROW) */}
+        {/* 🔹 Scrollable Artist Cards */}
         <div ref={carouselRef} className="overflow-x-auto scrollbar-hide">
-          <div className="grid grid-cols-3 gap-6 min-w-[800px] px-4">
+          <div className="flex gap-6 px-4">
             {artists.map((artist) => (
               <div key={artist.id} className="flex flex-col items-center">
                 <motion.div
@@ -97,17 +114,17 @@ export default function FeaturedArtists() {
                         <Image
                           src={artist.image}
                           alt={artist.name}
-                          width={500}
-                          height={500}
-                          unoptimized
+                          width={250}
+                          height={250}
                           className="w-full h-full object-cover"
+                          unoptimized
                         />
                       )}
                     </div>
                   </Link>
                 </motion.div>
 
-                {/* 🔹 Artist Name (Now Outside the Card) */}
+                {/* 🔹 Artist Name */}
                 <h3 className="mt-3 text-sm font-bold">{artist.name}</h3>
               </div>
             ))}
@@ -115,12 +132,12 @@ export default function FeaturedArtists() {
         </div>
 
         {/* 🔹 Right Scroll Button */}
-        <button onClick={scrollRight} className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-3 rounded-full z-10">
+        <button onClick={scrollRight} className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-3 rounded-full z-10 hover:bg-black transition">
           <FaChevronRight className="text-white text-2xl" />
         </button>
       </div>
 
-      {/* 🔹 Explore All Button (Now BELOW) */}
+      {/* 🔹 Explore All Button */}
       <div className="mt-6">
         <Link href="/artists" className="text-lg font-bold text-white hover:text-blue-400 transition flex items-center justify-center space-x-2">
           <span>Explore All</span>
