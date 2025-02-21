@@ -12,21 +12,17 @@ interface EventProps {
   params: { id: string };
 }
 
-// ✅ Server Component (fetch outside component)
-export async function getEventData(id: string): Promise<Event | null> {
+// ✅ Fetch event data inside the component
+export default async function EventDetailPage({ params }: EventProps) {
+  let event: Event | null = null;
+
   try {
     const response = await fetch("http://localhost:3000/api/events", { cache: "no-store" });
     const events: Event[] = await response.json();
-    return events.find((event) => event.id.toString() === id) || null;
+    event = events.find((event) => event.id.toString() === params.id) || null;
   } catch (error) {
     console.error("Failed to fetch events:", error);
-    return null;
   }
-}
-
-// ✅ Convert Component to Server Component
-export default async function EventDetailPage({ params }: EventProps) {
-  const event = await getEventData(params.id);
 
   if (!event) return notFound();
 
@@ -38,7 +34,7 @@ export default async function EventDetailPage({ params }: EventProps) {
         <Image
           src={event.image}
           alt={event.title}
-          fill // ✅ Fix: Uses Next.js `fill` prop for responsive images
+          fill // ✅ Uses Next.js `fill` for responsive images
           className="rounded-lg shadow-lg object-cover"
         />
       </div>
